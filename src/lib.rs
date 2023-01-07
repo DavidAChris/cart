@@ -5,6 +5,7 @@ use std::io::{self, BufRead, BufReader};
 
 type MyResult<T> = Result<T, Box<dyn Error>>;
 
+/// Runs the CART CLI
 pub fn run(config: Config) -> MyResult<()> {
     config.files.iter().for_each(|filename| {
         match open(filename) {
@@ -28,13 +29,18 @@ pub fn run(config: Config) -> MyResult<()> {
     Ok(())
 }
 
+/// Cmd Arguments
 #[derive(Debug)]
 pub struct Config {
+    /// Files to read from
     files: Vec<String>,
+    /// Number the lines including blanks lines
     number_lines: bool,
+    /// Only number lines if they are not blank
     number_nonblank_lines: bool,
 }
 
+/// Returns Command Line Arguments in the form of a struct Config
 pub fn get_args() -> MyResult<Config> {
     let matches = App::new("cart")
         .version("0.1.0")
@@ -71,6 +77,7 @@ pub fn get_args() -> MyResult<Config> {
     })
 }
 
+/// Opens the file or reads from STDIN
 fn open(filename: &str) -> MyResult<Box<dyn BufRead>> {
     match filename {
         "-" => Ok(Box::new(BufReader::new(io::stdin()))),
